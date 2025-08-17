@@ -45,8 +45,5 @@ Click **Save** after adding all URLs.
 - **GitHub**: https://github.com/speudoname/3apps
 
 ## 🔐 Database Password:
-```
-StrongPass2024!Secure#DB
-```
-
-Save this password securely - you'll need it to connect to the database directly.
+The database password has been securely stored in Supabase and should not be committed to version control.
+Only use it for direct database connections when absolutely necessary.
