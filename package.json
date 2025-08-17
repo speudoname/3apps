@@ -1,0 +1,21 @@
+{
+  "name": "3apps",
+  "version": "1.0.0",
+  "description": "AI Academia - 3 Demo Applications",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'No build required for static HTML'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/speudoname/3apps.git"
+  },
+  "keywords": [
+    "ai",
+    "academia",
+    "demo",
+    "supabase"
+  ],
+  "author": "AI Academia",
+  "license": "MIT"
+}
