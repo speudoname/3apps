@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>კალორიების კალკულატორი - AI Academia</title>
+    <link rel="stylesheet" href="auth-ui-enhanced.css">
     <style>
         * {
             margin: 0;
@@ -494,11 +495,11 @@
             <p>AI-ით გაძლიერებული სმარტ კალორიების აღრიცხვა</p>
         </div>
 
-        <!-- Auth Prompt Banner -->
-        <div id="authPrompt" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border: 2px solid #667eea; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center;">
-            <h3 style="color: #667eea; margin-bottom: 10px;">💡 გსურთ მონაცემების შენახვა?</h3>
-            <p style="color: #666; margin-bottom: 15px;">დარეგისტრირდით და თქვენი კალორიების ისტორია შეინახება ღრუბელში, ხელმისაწვდომი იქნება ნებისმიერი მოწყობილობიდან!</p>
-            <a href="auth.html" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 25px; font-weight: 600;">რეგისტრაცია / შესვლა</a>
+        <!-- Enhanced Auth Prompt Banner -->
+        <div id="authPrompt" class="auth-banner-enhanced">
+            <h3>🚀 გააქტიურე სრული ფუნქციონალი!</h3>
+            <p>💾 შეინახე კალორიების ისტორია ღრუბელში • 📊 ნახე სტატისტიკა • 🔄 სინქრონიზაცია ყველა მოწყობილობაზე</p>
+            <a href="auth.html" class="cta-button">დარეგისტრირდი უფასოდ →</a>
         </div>
 
         <div class="main-grid">
@@ -1090,5 +1091,11 @@
             displayProducts();
         });
     </script>
+    <!-- Floating Auth Button -->
+    <a href="auth.html" class="floating-auth-btn" id="floatingAuthBtn">
+        <span>🔓</span>
+        <span>რეგისტრაცია</span>
+    </a>
+
 </body>
 </html>

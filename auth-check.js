@@ -20,6 +20,7 @@ function checkAuthStatus() {
 function updateUIForLoggedInUser(userData) {
     const authStatus = document.getElementById('authStatus');
     const authPrompt = document.getElementById('authPrompt');
+    const floatingBtn = document.getElementById('floatingAuthBtn');
     
     if (authStatus) {
         authStatus.innerHTML = `
@@ -32,6 +33,14 @@ function updateUIForLoggedInUser(userData) {
     if (authPrompt) {
         authPrompt.style.display = 'none';
     }
+    
+    // Hide floating button for logged-in users
+    if (floatingBtn) {
+        floatingBtn.style.display = 'none';
+    }
+    
+    // Add logged-in class to body
+    document.body.classList.add('user-logged-in');
 }
 
 function updateUIForGuest() {

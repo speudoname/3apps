@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task მენეჯერი - AI Academia</title>
+    <link rel="stylesheet" href="auth-ui-enhanced.css">
     <style>
         * {
             margin: 0;
@@ -400,11 +401,11 @@
             <p>AI-ით გაძლიერებული დავალებების მართვის სისტემა</p>
         </div>
 
-        <!-- Auth Prompt Banner -->
-        <div id="authPrompt" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border: 2px solid #667eea; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center;">
-            <h3 style="color: #667eea; margin-bottom: 10px;">☁️ სინქრონიზაცია ყველა მოწყობილობაზე</h3>
-            <p style="color: #666; margin-bottom: 15px;">შეინახეთ თქვენი დავალებები ღრუბელში და მიიღეთ წვდომა ნებისმიერი მოწყობილობიდან. არასდროს დაკარგავთ მნიშვნელოვან დავალებას!</p>
-            <a href="auth.html" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 25px; font-weight: 600;">დარეგისტრირდი უფასოდ</a>
+        <!-- Enhanced Auth Prompt Banner -->
+        <div id="authPrompt" class="auth-banner-enhanced">
+            <h3>☁️ სინქრონიზაცია ყველა მოწყობილობაზე!</h3>
+            <p>📱 წვდომა ნებისმიერი მოწყობილობიდან • 🔔 შეხსენებები • 👥 გუნდური მუშაობა</p>
+            <a href="auth.html" class="cta-button">დაიწყე უფასოდ →</a>
         </div>
 
         <div class="main-layout">
@@ -694,5 +695,11 @@
         updateCalendar();
         updateStats();
     </script>
+
+    <!-- Floating Auth Button -->
+    <a href="auth.html" class="floating-auth-btn" id="floatingAuthBtn">
+        <span>🔐</span>
+        <span>შესვლა</span>
+    </a>
 </body>
 </html>

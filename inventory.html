@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>მარაგების აღრიცხვა - AI Academia</title>
+    <link rel="stylesheet" href="auth-ui-enhanced.css">
     <style>
         * {
             margin: 0;
@@ -417,11 +418,11 @@
             <p>AI-ით გაძლიერებული ინვენტარის მართვის სისტემა</p>
         </div>
 
-        <!-- Auth Prompt Banner -->
-        <div id="authPrompt" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 193, 7, 0.1)); border: 2px solid #ff6b6b; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center;">
-            <h3 style="color: #ff6b6b; margin-bottom: 10px;">🚀 სრული ბიზნეს ფუნქციონალი</h3>
-            <p style="color: #666; margin-bottom: 15px;">მიიღეთ წვდომა პროფესიონალურ ფუნქციებზე: რეალური დროის სინქრონიზაცია, მრავალმომხმარებლიანი წვდომა, ავტომატური შეკვეთები და AI პროგნოზები!</p>
-            <a href="auth.html" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #ff6b6b, #ff9f43); color: white; text-decoration: none; border-radius: 25px; font-weight: 600;">დაიწყე 30 დღიანი ტრაილი</a>
+        <!-- Enhanced Auth Prompt Banner with Special Business Offer -->
+        <div id="authPrompt" class="auth-banner-enhanced" style="background: linear-gradient(135deg, #ff6b6b, #ff9f43);">
+            <h3>🏢 ბიზნეს ვერსია - 30 დღე უფასოდ!</h3>
+            <p>📊 AI პროგნოზები • 👥 მრავალმომხმარებლიანი • 🔄 ავტომატური შეკვეთები • 📈 ანალიტიკა</p>
+            <a href="auth.html" class="cta-button">დაიწყე ტრაილი →</a>
         </div>
 
         <div class="controls">
@@ -700,5 +701,11 @@
         // Initialize
         updateTable();
     </script>
+
+    <!-- Floating Auth Button -->
+    <a href="auth.html" class="floating-auth-btn" id="floatingAuthBtn" style="background: linear-gradient(135deg, #ff6b6b, #ff9f43);">
+        <span>🏢</span>
+        <span>ბიზნეს ტრაილი</span>
+    </a>
 </body>
 </html>
