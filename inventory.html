@@ -403,10 +403,25 @@
 <body>
     <a href="index.html" class="back-btn">← უკან</a>
 
+    <!-- Auth Status Bar -->
+    <div style="position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.95); padding: 10px 20px; border-radius: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 100;">
+        <div id="authStatus" style="display: flex; align-items: center; gap: 10px;">
+            <span style="color: #666;">⚠️ დემო რეჟიმი</span>
+            <a href="auth.html" style="padding: 8px 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 20px; font-weight: 600;">ბიზნეს ანგარიში</a>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>📦 მარაგების აღრიცხვა</h1>
             <p>AI-ით გაძლიერებული ინვენტარის მართვის სისტემა</p>
+        </div>
+
+        <!-- Auth Prompt Banner -->
+        <div id="authPrompt" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 193, 7, 0.1)); border: 2px solid #ff6b6b; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center;">
+            <h3 style="color: #ff6b6b; margin-bottom: 10px;">🚀 სრული ბიზნეს ფუნქციონალი</h3>
+            <p style="color: #666; margin-bottom: 15px;">მიიღეთ წვდომა პროფესიონალურ ფუნქციებზე: რეალური დროის სინქრონიზაცია, მრავალმომხმარებლიანი წვდომა, ავტომატური შეკვეთები და AI პროგნოზები!</p>
+            <a href="auth.html" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #ff6b6b, #ff9f43); color: white; text-decoration: none; border-radius: 25px; font-weight: 600;">დაიწყე 30 დღიანი ტრაილი</a>
         </div>
 
         <div class="controls">
@@ -516,6 +531,9 @@
             </div>
         </div>
     </div>
+
+    <script src="config.js"></script>
+    <script src="auth-check.js"></script>
 
     <!-- Add Product Modal -->
     <div class="modal" id="addModal">

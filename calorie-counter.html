@@ -480,10 +480,25 @@
 <body>
     <a href="index.html" class="back-btn">← უკან</a>
 
+    <!-- Auth Status Bar -->
+    <div style="position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.95); padding: 10px 20px; border-radius: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 100;">
+        <div id="authStatus" style="display: flex; align-items: center; gap: 10px;">
+            <span style="color: #666;">💾 მონაცემები ინახება ლოკალურად</span>
+            <a href="auth.html" style="padding: 8px 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 20px; font-weight: 600;">შესვლა</a>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>🍎 კალორიების კალკულატორი</h1>
             <p>AI-ით გაძლიერებული სმარტ კალორიების აღრიცხვა</p>
+        </div>
+
+        <!-- Auth Prompt Banner -->
+        <div id="authPrompt" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border: 2px solid #667eea; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center;">
+            <h3 style="color: #667eea; margin-bottom: 10px;">💡 გსურთ მონაცემების შენახვა?</h3>
+            <p style="color: #666; margin-bottom: 15px;">დარეგისტრირდით და თქვენი კალორიების ისტორია შეინახება ღრუბელში, ხელმისაწვდომი იქნება ნებისმიერი მოწყობილობიდან!</p>
+            <a href="auth.html" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 25px; font-weight: 600;">რეგისტრაცია / შესვლა</a>
         </div>
 
         <div class="main-grid">
@@ -624,6 +639,9 @@
             </div>
         </div>
     </div>
+
+    <script src="config.js"></script>
+    <script src="auth-check.js"></script>
 
     <!-- Custom Food Modal -->
     <div class="modal" id="customFoodModal">

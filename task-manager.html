@@ -386,10 +386,25 @@
 <body>
     <a href="index.html" class="back-btn">← უკან</a>
 
+    <!-- Auth Status Bar -->
+    <div style="position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.95); padding: 10px 20px; border-radius: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 100;">
+        <div id="authStatus" style="display: flex; align-items: center; gap: 10px;">
+            <span style="color: #666;">📱 ლოკალური რეჟიმი</span>
+            <a href="auth.html" style="padding: 8px 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 20px; font-weight: 600;">შესვლა</a>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>📅 Task მენეჯერი</h1>
             <p>AI-ით გაძლიერებული დავალებების მართვის სისტემა</p>
+        </div>
+
+        <!-- Auth Prompt Banner -->
+        <div id="authPrompt" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border: 2px solid #667eea; border-radius: 15px; padding: 20px; margin-bottom: 30px; text-align: center;">
+            <h3 style="color: #667eea; margin-bottom: 10px;">☁️ სინქრონიზაცია ყველა მოწყობილობაზე</h3>
+            <p style="color: #666; margin-bottom: 15px;">შეინახეთ თქვენი დავალებები ღრუბელში და მიიღეთ წვდომა ნებისმიერი მოწყობილობიდან. არასდროს დაკარგავთ მნიშვნელოვან დავალებას!</p>
+            <a href="auth.html" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 25px; font-weight: 600;">დარეგისტრირდი უფასოდ</a>
         </div>
 
         <div class="main-layout">
@@ -471,6 +486,8 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
+    <script src="auth-check.js"></script>
     <script>
         let tasks = [];
         let currentPriority = 'medium';

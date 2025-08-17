@@ -402,6 +402,23 @@
                 }
             });
         });
+
+        // Check if user is logged in and update auth button
+        function checkAuthStatus() {
+            const user = localStorage.getItem('user');
+            const authButton = document.getElementById('authButtonText');
+            
+            if (user && authButton) {
+                try {
+                    const userData = JSON.parse(user);
+                    authButton.textContent = '👤 ' + userData.email.split('@')[0];
+                } catch (e) {
+                    authButton.textContent = '🔐 შესვლა';
+                }
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
     </script>
 </body>
 </html>
