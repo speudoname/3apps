@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>მარაგების აღრიცხვა - AI Academia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 60px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+        }
+
+        .stat-icon.products { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-icon.low-stock { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .stat-icon.categories { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .stat-icon.value { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .main-content {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 10px 25px;
+            background: transparent;
+            border: none;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .stock-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stock-badge.high {
+            background: rgba(17, 153, 142, 0.2);
+            color: #11998e;
+        }
+
+        .stock-badge.medium {
+            background: rgba(242, 153, 74, 0.2);
+            color: #f2994a;
+        }
+
+        .stock-badge.low {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .action-btn.edit {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+
+        .action-btn.delete {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+        }
+
+        .close-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .predictions {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 193, 7, 0.1));
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .prediction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .prediction-info {
+            flex: 1;
+        }
+
+        .prediction-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .prediction-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← უკან</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>📦 მარაგების აღრიცხვა</h1>
+            <p>AI-ით გაძლიერებული ინვენტარის მართვის სისტემა</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="ძიება პროდუქტის სახელით, კოდით...">
+            </div>
+            <button class="btn btn-success" onclick="openAddModal()">
+                ➕ ახალი პროდუქტი
+            </button>
+            <button class="btn btn-warning" onclick="generateReport()">
+                📊 რეპორტი
+            </button>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon products">📦</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-label">სულ პროდუქტი</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon low-stock">⚠️</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="lowStock">0</div>
+                    <div class="stat-label">დაბალი მარაგი</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon categories">📂</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="categories">0</div>
+                    <div class="stat-label">კატეგორია</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon value">💰</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="totalValue">₾0</div>
+                    <div class="stat-label">საერთო ღირებულება</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('products')">პროდუქტები</button>
+                <button class="tab" onclick="switchTab('predictions')">AI პროგნოზები</button>
+                <button class="tab" onclick="switchTab('orders')">შეკვეთები</button>
+            </div>
+
+            <div id="productsTab" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>კოდი</th>
+                                <th>დასახელება</th>
+                                <th>კატეგორია</th>
+                                <th>რაოდენობა</th>
+                                <th>ფასი</th>
+                                <th>სტატუსი</th>
+                                <th>მოქმედებები</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="predictionsTab" class="tab-content" style="display: none;">
+                <div class="predictions">
+                    <h3 style="margin-bottom: 20px;">🤖 AI შეფასებები და რეკომენდაციები</h3>
+                    
+                    <div class="prediction-item">
+                        <div class="prediction-info">
+                            <div class="prediction-title">⚡ რძის პროდუქტები - შეკვეთა საჭიროა</div>
+                            <div class="prediction-desc">ბოლო 30 დღის მონაცემებზე დაყრდნობით, რძის პროდუქტების მარაგი ამოიწურება 5 დღეში</div>
+                        </div>
+                        <button class="btn" style="padding: 10px 20px; font-size: 0.9rem;">შეკვეთა</button>
+                    </div>
+                    
+                    <div class="prediction-item">
+                        <div class="prediction-info">
+                            <div class="prediction-title">📈 პურ-ფუნთუშეული - გაყიდვები იზრდება</div>
+                            <div class="prediction-desc">გაყიდვები გაიზარდა 25%-ით. რეკომენდაცია: გაზარდეთ მარაგი 30%-ით</div>
+                        </div>
+                        <button class="btn" style="padding: 10px 20px; font-size: 0.9rem;">დეტალები</button>
+                    </div>
+                    
+                    <div class="prediction-item">
+                        <div class="prediction-info">
+                            <div class="prediction-title">💡 სეზონური პროდუქტები</div>
+                            <div class="prediction-desc">ზაფხულის სეზონისთვის მოამზადეთ სასმელების და ნაყინის მარაგი</div>
+                        </div>
+                        <button class="btn" style="padding: 10px 20px; font-size: 0.9rem;">გეგმა</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ordersTab" class="tab-content" style="display: none;">
+                <div style="text-align: center; padding: 50px;">
+                    <h3 style="color: #666; margin-bottom: 20px;">შეკვეთების ისტორია</h3>
+                    <p style="color: #999;">ავტომატური შეკვეთების სისტემა მალე დაემატება</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ახალი პროდუქტის დამატება</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            
+            <form onsubmit="addProduct(event)">
+                <div class="form-group">
+                    <label>პროდუქტის კოდი</label>
+                    <input type="text" id="productCode" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>დასახელება</label>
+                    <input type="text" id="productName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>კატეგორია</label>
+                    <select id="productCategory" required>
+                        <option value="">აირჩიეთ კატეგორია</option>
+                        <option value="საკვები">საკვები</option>
+                        <option value="სასმელი">სასმელი</option>
+                        <option value="ელექტრონიკა">ელექტრონიკა</option>
+                        <option value="ტანსაცმელი">ტანსაცმელი</option>
+                        <option value="საყოფაცხოვრებო">საყოფაცხოვრებო</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>რაოდენობა</label>
+                    <input type="number" id="productQuantity" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>ფასი (₾)</label>
+                    <input type="number" id="productPrice" min="0" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>მინიმალური მარაგი</label>
+                    <input type="number" id="minStock" min="0" value="10" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn" style="background: #e0e0e0; color: #333;" onclick="closeModal()">გაუქმება</button>
+                    <button type="submit" class="btn">დამატება</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let products = [
+            { code: 'PRD001', name: 'რძე 2.5%', category: 'საკვები', quantity: 45, price: 3.50, minStock: 20 },
+            { code: 'PRD002', name: 'პური შავი', category: 'საკვები', quantity: 30, price: 1.80, minStock: 15 },
+            { code: 'PRD003', name: 'კოკა-კოლა 1ლ', category: 'სასმელი', quantity: 85, price: 2.50, minStock: 30 },
+            { code: 'PRD004', name: 'ვაშლი კგ', category: 'საკვები', quantity: 25, price: 2.80, minStock: 20 },
+            { code: 'PRD005', name: 'ყველი სულგუნი კგ', category: 'საკვები', quantity: 8, price: 18.00, minStock: 10 },
+            { code: 'PRD006', name: 'კვერცხი 10ც', category: 'საკვები', quantity: 50, price: 5.50, minStock: 20 }
+        ];
+
+        function updateTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredProducts = products.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) || 
+                p.code.toLowerCase().includes(searchTerm)
+            );
+            
+            const tbody = document.getElementById('productTableBody');
+            tbody.innerHTML = filteredProducts.map(product => {
+                const stockLevel = product.quantity <= product.minStock ? 'low' : 
+                                 product.quantity <= product.minStock * 2 ? 'medium' : 'high';
+                const stockText = stockLevel === 'low' ? 'დაბალი' : 
+                                stockLevel === 'medium' ? 'საშუალო' : 'მაღალი';
+                
+                return `
+                    <tr>
+                        <td>${product.code}</td>
+                        <td><strong>${product.name}</strong></td>
+                        <td>${product.category}</td>
+                        <td>${product.quantity}</td>
+                        <td>₾${product.price.toFixed(2)}</td>
+                        <td><span class="stock-badge ${stockLevel}">${stockText}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn edit" onclick="editProduct('${product.code}')">✏️ შეცვლა</button>
+                                <button class="action-btn delete" onclick="deleteProduct('${product.code}')">🗑️ წაშლა</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('lowStock').textContent = products.filter(p => p.quantity <= p.minStock).length;
+            
+            const categories = [...new Set(products.map(p => p.category))];
+            document.getElementById('categories').textContent = categories.length;
+            
+            const totalValue = products.reduce((sum, p) => sum + (p.quantity * p.price), 0);
+            document.getElementById('totalValue').textContent = `₾${totalValue.toFixed(2)}`;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').style.display = 'block';
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').classList.remove('active');
+        }
+
+        function addProduct(event) {
+            event.preventDefault();
+            
+            const newProduct = {
+                code: document.getElementById('productCode').value,
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                quantity: parseInt(document.getElementById('productQuantity').value),
+                price: parseFloat(document.getElementById('productPrice').value),
+                minStock: parseInt(document.getElementById('minStock').value)
+            };
+            
+            products.push(newProduct);
+            updateTable();
+            closeModal();
+            event.target.reset();
+        }
+
+        function editProduct(code) {
+            alert(`პროდუქტის რედაქტირება: ${code}`);
+        }
+
+        function deleteProduct(code) {
+            if (confirm('ნამდვილად გსურთ ამ პროდუქტის წაშლა?')) {
+                products = products.filter(p => p.code !== code);
+                updateTable();
+            }
+        }
+
+        function generateReport() {
+            alert('რეპორტი მზადდება... AI ანალიზი მიმდინარეობს');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', updateTable);
+
+        // Initialize
+        updateTable();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>კალორიების კალკულატორი - AI Academia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+        }
+
+        .close-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .autocomplete-item:hover {
+            background: #f0f0f0;
+        }
+
+        .autocomplete-item strong {
+            color: #667eea;
+        }
+
+        .category-tab {
+            padding: 10px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .category-tab:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .product-info {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .product-calories {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 8px 0;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 60px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .food-input {
+            grid-column: span 2;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .food-search {
+            display: flex;
+            gap: 10px;
+        }
+
+        .food-search input {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .food-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .food-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .food-info {
+            flex: 1;
+        }
+
+        .food-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .food-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .delete-btn {
+            padding: 8px 15px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .meal-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meal-btn {
+            padding: 10px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .meal-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .recommendations {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+
+        .recommendation-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .recommendation-item {
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .recommendation-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .recommendation-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .food-input {
+                grid-column: span 1;
+            }
+            
+            .recommendations {
+                grid-column: span 1;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← უკან</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🍎 კალორიების კალკულატორი</h1>
+            <p>AI-ით გაძლიერებული სმარტ კალორიების აღრიცხვა</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="card food-input">
+                <h2>საკვების დამატება</h2>
+                
+                <div class="meal-selector">
+                    <button class="meal-btn active" onclick="selectMeal(this, 'საუზმე')">🌅 საუზმე</button>
+                    <button class="meal-btn" onclick="selectMeal(this, 'ლანჩი')">☀️ ლანჩი</button>
+                    <button class="meal-btn" onclick="selectMeal(this, 'სადილი')">🌆 სადილი</button>
+                    <button class="meal-btn" onclick="selectMeal(this, 'ვახშამი')">🌙 ვახშამი</button>
+                    <button class="meal-btn" onclick="selectMeal(this, 'სნექი')">🍿 სნექი</button>
+                </div>
+
+                <div class="input-group">
+                    <label>საკვების დასახელება</label>
+                    <div class="food-search" style="position: relative;">
+                        <input type="text" id="foodName" placeholder="მაგ: ვაშლი, პური, ქათმის მკერდი..." onkeyup="showSuggestions()" autocomplete="off">
+                        <button class="btn" onclick="openCustomFoodModal()">➕ ახალი</button>
+                        <div id="suggestions" class="autocomplete-list" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>რაოდენობა (გრამი)</label>
+                    <input type="number" id="foodAmount" placeholder="100" value="100">
+                </div>
+
+                <button class="btn btn-success" onclick="addFood()" style="width: 100%;">
+                    ➕ დამატება
+                </button>
+
+                <div class="food-list" id="foodList"></div>
+            </div>
+
+            <div class="card stats-card">
+                <h2 style="color: #333; margin-bottom: 20px;">დღევანდელი სტატისტიკა</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCalories">0</div>
+                        <div class="stat-label">კალორია</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalProtein">0g</div>
+                        <div class="stat-label">ცილა</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCarbs">0g</div>
+                        <div class="stat-label">ნახშირწყალი</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalFat">0g</div>
+                        <div class="stat-label">ცხიმი</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">
+                        0% დღიური ნორმიდან
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">დღიური მიზანი</h3>
+                    <div class="input-group">
+                        <label>კალორიების ლიმიტი</label>
+                        <input type="number" id="dailyGoal" value="2000" onchange="updateProgress()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card recommendations">
+                <h2>🤖 AI რეკომენდაციები</h2>
+                <p style="margin-bottom: 20px;">დაამატეთ ეს ჯანსაღი საკვები თქვენს დიეტაში:</p>
+                
+                <div class="recommendation-list">
+                    <div class="recommendation-item" onclick="quickAdd('ავოკადო', 160)">
+                        <div class="recommendation-icon">🥑</div>
+                        <div>ავოკადო</div>
+                        <small>160 კალ / 100გ</small>
+                    </div>
+                    <div class="recommendation-item" onclick="quickAdd('ბროკოლი', 34)">
+                        <div class="recommendation-icon">🥦</div>
+                        <div>ბროკოლი</div>
+                        <small>34 კალ / 100გ</small>
+                    </div>
+                    <div class="recommendation-item" onclick="quickAdd('ქათმის მკერდი', 165)">
+                        <div class="recommendation-icon">🍗</div>
+                        <div>ქათმის მკერდი</div>
+                        <small>165 კალ / 100გ</small>
+                    </div>
+                    <div class="recommendation-item" onclick="quickAdd('კვერცხი', 155)">
+                        <div class="recommendation-icon">🥚</div>
+                        <div>კვერცხი</div>
+                        <small>155 კალ / 100გ</small>
+                    </div>
+                    <div class="recommendation-item" onclick="quickAdd('ბანანი', 89)">
+                        <div class="recommendation-icon">🍌</div>
+                        <div>ბანანი</div>
+                        <small>89 კალ / 100გ</small>
+                    </div>
+                    <div class="recommendation-item" onclick="quickAdd('ბადამი', 579)">
+                        <div class="recommendation-icon">🥜</div>
+                        <div>ბადამი</div>
+                        <small>579 კალ / 100გ</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Products Database -->
+            <div class="card" style="grid-column: span 2; margin-top: 30px;">
+                <h2 style="margin-bottom: 30px;">📚 სრული პროდუქტების ბაზა</h2>
+                
+                <!-- Category Tabs -->
+                <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+                    <button class="category-tab active" onclick="showCategory('all')">ყველა</button>
+                    <button class="category-tab" onclick="showCategory('fruits')">🍎 ხილი</button>
+                    <button class="category-tab" onclick="showCategory('vegetables')">🥕 ბოსტნეული</button>
+                    <button class="category-tab" onclick="showCategory('dairy')">🥛 რძის</button>
+                    <button class="category-tab" onclick="showCategory('meat')">🥩 ხორცი/თევზი</button>
+                    <button class="category-tab" onclick="showCategory('grains')">🌾 მარცვლეული</button>
+                    <button class="category-tab" onclick="showCategory('nuts')">🥜 თხილეული</button>
+                    <button class="category-tab" onclick="showCategory('sweets')">🍰 ტკბილეული</button>
+                </div>
+                
+                <!-- Search in database -->
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="databaseSearch" placeholder="ძებნა ბაზაში..." 
+                           style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;"
+                           onkeyup="filterDatabase()">
+                </div>
+                
+                <!-- Products Grid -->
+                <div id="productsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; max-height: 600px; overflow-y: auto; padding: 10px;">
+                    <!-- Products will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Food Modal -->
+    <div class="modal" id="customFoodModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ახალი საკვების დამატება</h2>
+                <button class="close-btn" onclick="closeCustomModal()">×</button>
+            </div>
+            
+            <form onsubmit="addCustomFood(event)">
+                <div class="form-group">
+                    <label>საკვების დასახელება</label>
+                    <input type="text" id="customFoodName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>კალორიები (100გ-ზე)</label>
+                    <input type="number" id="customCalories" min="0" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>ცილა (გრამი, 100გ-ზე)</label>
+                    <input type="number" id="customProtein" min="0" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>ნახშირწყლები (გრამი, 100გ-ზე)</label>
+                    <input type="number" id="customCarbs" min="0" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>ცხიმი (გრამი, 100გ-ზე)</label>
+                    <input type="number" id="customFat" min="0" step="0.1" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn" style="background: #e0e0e0; color: #333;" onclick="closeCustomModal()">გაუქმება</button>
+                    <button type="submit" class="btn">დამატება</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let foods = [];
+        let currentMeal = 'საუზმე';
+        let customFoods = JSON.parse(localStorage.getItem('customFoods') || '{}');
+        
+        const foodDatabase = {
+            // ხილი და ბოსტნეული
+            'ვაშლი': { calories: 52, protein: 0.3, carbs: 14, fat: 0.2 },
+            'ბანანი': { calories: 89, protein: 1.1, carbs: 23, fat: 0.3 },
+            'ფორთოხალი': { calories: 47, protein: 0.9, carbs: 12, fat: 0.1 },
+            'მანდარინი': { calories: 53, protein: 0.8, carbs: 13, fat: 0.3 },
+            'მსხალი': { calories: 57, protein: 0.4, carbs: 15, fat: 0.1 },
+            'ატამი': { calories: 39, protein: 0.9, carbs: 10, fat: 0.3 },
+            'ალუბალი': { calories: 50, protein: 1, carbs: 12, fat: 0.3 },
+            'ყურძენი': { calories: 67, protein: 0.6, carbs: 17, fat: 0.4 },
+            'საზამთრო': { calories: 30, protein: 0.6, carbs: 8, fat: 0.2 },
+            'ნესვი': { calories: 34, protein: 0.8, carbs: 8, fat: 0.2 },
+            'მარწყვი': { calories: 32, protein: 0.7, carbs: 8, fat: 0.3 },
+            'ლიმონი': { calories: 29, protein: 1.1, carbs: 9, fat: 0.3 },
+            'კივი': { calories: 61, protein: 1.1, carbs: 15, fat: 0.5 },
+            'ანანასი': { calories: 50, protein: 0.5, carbs: 13, fat: 0.1 },
+            'მანგო': { calories: 60, protein: 0.8, carbs: 15, fat: 0.4 },
+            
+            // ბოსტნეული
+            'პომიდორი': { calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2 },
+            'კიტრი': { calories: 16, protein: 0.7, carbs: 3.6, fat: 0.1 },
+            'კარტოფილი': { calories: 77, protein: 2, carbs: 17, fat: 0.1 },
+            'სტაფილო': { calories: 41, protein: 0.9, carbs: 10, fat: 0.2 },
+            'ხახვი': { calories: 40, protein: 1.1, carbs: 9, fat: 0.1 },
+            'ნიორი': { calories: 149, protein: 6.4, carbs: 33, fat: 0.5 },
+            'კომბოსტო': { calories: 25, protein: 1.3, carbs: 6, fat: 0.1 },
+            'ყვავილოვანი კომბოსტო': { calories: 25, protein: 1.9, carbs: 5, fat: 0.3 },
+            'ბროკოლი': { calories: 34, protein: 2.8, carbs: 7, fat: 0.4 },
+            'ბადრიჯანი': { calories: 25, protein: 1, carbs: 6, fat: 0.2 },
+            'გოგრა': { calories: 26, protein: 1, carbs: 7, fat: 0.1 },
+            'ბულგარული წიწაკა': { calories: 31, protein: 1, carbs: 6, fat: 0.3 },
+            'წიწაკა': { calories: 40, protein: 1.9, carbs: 9, fat: 0.4 },
+            'ჭარხალი': { calories: 43, protein: 1.6, carbs: 10, fat: 0.2 },
+            'სალათის ფოთოლი': { calories: 15, protein: 1.4, carbs: 2.9, fat: 0.2 },
+            'ისპანახი': { calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4 },
+            'მწვანილი': { calories: 36, protein: 3.7, carbs: 6.3, fat: 0.4 },
+            
+            // რძის პროდუქტები
+            'რძე 2.5%': { calories: 52, protein: 3.3, carbs: 4.8, fat: 2.5 },
+            'რძე 3.2%': { calories: 61, protein: 3.2, carbs: 4.8, fat: 3.2 },
+            'მაწონი': { calories: 56, protein: 2.9, carbs: 3.6, fat: 3.2 },
+            'კეფირი': { calories: 59, protein: 3.4, carbs: 4.1, fat: 3.2 },
+            'იოგურტი': { calories: 68, protein: 5, carbs: 3.5, fat: 3.3 },
+            'ხაჭო': { calories: 174, protein: 18, carbs: 3.3, fat: 11 },
+            'არაჟანი': { calories: 110, protein: 14, carbs: 3.6, fat: 4.3 },
+            'ყველი სულგუნი': { calories: 286, protein: 20, carbs: 0, fat: 22 },
+            'ყველი იმერული': { calories: 260, protein: 20, carbs: 0, fat: 20 },
+            'ყველი ჰოლანდიური': { calories: 352, protein: 26, carbs: 2, fat: 27 },
+            'ნაღები': { calories: 337, protein: 2.2, carbs: 3.4, fat: 35 },
+            'კარაქი': { calories: 717, protein: 0.5, carbs: 0.8, fat: 81 },
+            
+            // ხორცი და თევზი
+            'ქათმის მკერდი': { calories: 165, protein: 31, carbs: 0, fat: 3.6 },
+            'ქათმის ბარკალი': { calories: 185, protein: 26, carbs: 0, fat: 8.4 },
+            'ღორის ხორცი': { calories: 242, protein: 27, carbs: 0, fat: 14 },
+            'საქონლის ხორცი': { calories: 250, protein: 26, carbs: 0, fat: 15 },
+            'ცხვრის ხორცი': { calories: 294, protein: 25, carbs: 0, fat: 21 },
+            'ძეხვი': { calories: 301, protein: 17, carbs: 1.8, fat: 25 },
+            'სოსისი': { calories: 277, protein: 10, carbs: 1.5, fat: 25 },
+            'ლორი': { calories: 541, protein: 23, carbs: 1.5, fat: 50 },
+            'ორაგული': { calories: 208, protein: 20, carbs: 0, fat: 13 },
+            'კალმახი': { calories: 148, protein: 20, carbs: 0, fat: 7 },
+            'კობრი': { calories: 79, protein: 18, carbs: 0, fat: 0.7 },
+            'თინუსი': { calories: 144, protein: 23, carbs: 0, fat: 5 },
+            
+            // პურ-ფუნთუშეული
+            'პური თეთრი': { calories: 265, protein: 9, carbs: 49, fat: 3.2 },
+            'პური შავი': { calories: 259, protein: 8.5, carbs: 48, fat: 3.3 },
+            'შოთის პური': { calories: 270, protein: 8, carbs: 55, fat: 1.5 },
+            'ლავაში': { calories: 275, protein: 9, carbs: 56, fat: 1.2 },
+            'ხაჭაპური': { calories: 330, protein: 12, carbs: 35, fat: 15 },
+            'ლობიანი': { calories: 280, protein: 10, carbs: 40, fat: 8 },
+            
+            // მარცვლეული
+            'ბრინჯი': { calories: 130, protein: 2.7, carbs: 28, fat: 0.3 },
+            'წიწიბურა': { calories: 343, protein: 13, carbs: 72, fat: 3.4 },
+            'შვრია': { calories: 389, protein: 17, carbs: 66, fat: 7 },
+            'ქერი': { calories: 354, protein: 12, carbs: 73, fat: 2.3 },
+            'სიმინდი': { calories: 86, protein: 3.3, carbs: 19, fat: 1.2 },
+            'ფეტვი': { calories: 340, protein: 10, carbs: 70, fat: 2 },
+            
+            // პარკოსნები
+            'ლობიო': { calories: 333, protein: 22, carbs: 60, fat: 1.5 },
+            'ბარდა': { calories: 81, protein: 5.4, carbs: 14, fat: 0.4 },
+            'ოსპი': { calories: 352, protein: 25, carbs: 60, fat: 1.1 },
+            'მუხუდო': { calories: 364, protein: 20, carbs: 60, fat: 6 },
+            
+            // კვერცხი და სხვა
+            'კვერცხი': { calories: 155, protein: 13, carbs: 1.1, fat: 11 },
+            'კვერცხის თეთრი': { calories: 52, protein: 11, carbs: 0.7, fat: 0.2 },
+            'კვერცხის გული': { calories: 322, protein: 16, carbs: 3.6, fat: 27 },
+            'თაფლი': { calories: 304, protein: 0.3, carbs: 82, fat: 0 },
+            'შაქარი': { calories: 387, protein: 0, carbs: 100, fat: 0 },
+            'ზეთი': { calories: 884, protein: 0, carbs: 0, fat: 100 },
+            'ზეითუნის ზეთი': { calories: 884, protein: 0, carbs: 0, fat: 100 },
+            'მარილი': { calories: 0, protein: 0, carbs: 0, fat: 0 },
+            
+            // თხილეული
+            'ნიგოზი': { calories: 654, protein: 15, carbs: 14, fat: 65 },
+            'ბადამი': { calories: 579, protein: 21, carbs: 22, fat: 50 },
+            'თხილი': { calories: 628, protein: 15, carbs: 17, fat: 61 },
+            'პისტა': { calories: 560, protein: 20, carbs: 28, fat: 45 },
+            'მზესუმზირა': { calories: 584, protein: 21, carbs: 20, fat: 51 },
+            
+            // სასმელები
+            'ჩაი': { calories: 1, protein: 0, carbs: 0.3, fat: 0 },
+            'ყავა': { calories: 2, protein: 0.3, carbs: 0, fat: 0 },
+            'კაკაო': { calories: 228, protein: 20, carbs: 58, fat: 14 },
+            'წვენი': { calories: 45, protein: 0.5, carbs: 11, fat: 0.1 },
+            'ლიმონათი': { calories: 40, protein: 0, carbs: 10, fat: 0 },
+            'კოლა': { calories: 42, protein: 0, carbs: 11, fat: 0 },
+            
+            // სოუსები და სანელებლები
+            'მაიონეზი': { calories: 680, protein: 2.8, carbs: 3.7, fat: 75 },
+            'კეტჩუპი': { calories: 93, protein: 1.8, carbs: 22, fat: 0.2 },
+            'აჯიკა': { calories: 59, protein: 1, carbs: 5.8, fat: 3.7 },
+            'ტკემალი': { calories: 64, protein: 0.5, carbs: 15, fat: 0.1 },
+            'სოიოს სოუსი': { calories: 53, protein: 6, carbs: 5.6, fat: 0.1 },
+            
+            // ფქვილოვანი
+            'მაკარონი': { calories: 371, protein: 13, carbs: 75, fat: 1.5 },
+            'სპაგეტი': { calories: 371, protein: 13, carbs: 75, fat: 1.5 },
+            'ფქვილი': { calories: 364, protein: 10, carbs: 76, fat: 1 },
+            
+            // ტკბილეული
+            'შოკოლადი': { calories: 535, protein: 5, carbs: 60, fat: 30 },
+            'ნამცხვარი': { calories: 400, protein: 6, carbs: 50, fat: 20 },
+            'ნაყინი': { calories: 207, protein: 3.5, carbs: 24, fat: 11 },
+            'ჟელე': { calories: 62, protein: 1.5, carbs: 15, fat: 0 },
+            'ტორტი': { calories: 350, protein: 4.5, carbs: 50, fat: 15 },
+            
+            // დაამატე კუსტომ საკვები
+            ...customFoods
+        };
+
+        function selectMeal(btn, meal) {
+            document.querySelectorAll('.meal-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMeal = meal;
+        }
+
+        function showSuggestions() {
+            const input = document.getElementById('foodName');
+            const value = input.value.toLowerCase();
+            const suggestions = document.getElementById('suggestions');
+            
+            if (value.length < 2) {
+                suggestions.style.display = 'none';
+                return;
+            }
+            
+            const matches = Object.keys(foodDatabase).filter(food => 
+                food.toLowerCase().includes(value)
+            ).slice(0, 10);
+            
+            if (matches.length > 0) {
+                suggestions.innerHTML = matches.map(food => {
+                    const highlightedFood = food.replace(
+                        new RegExp(value, 'gi'), 
+                        match => `<strong>${match}</strong>`
+                    );
+                    const data = foodDatabase[food];
+                    return `
+                        <div class="autocomplete-item" onclick="selectFood('${food}')">
+                            <div>${highlightedFood}</div>
+                            <small style="color: #666;">${data.calories} კალ | ც: ${data.protein}გ | ნ: ${data.carbs}გ | ცხ: ${data.fat}გ</small>
+                        </div>
+                    `;
+                }).join('');
+                suggestions.style.display = 'block';
+            } else {
+                suggestions.innerHTML = `
+                    <div class="autocomplete-item" style="color: #999;">
+                        ვერ მოიძებნა. დააჭირეთ "➕ ახალი" ღილაკს დასამატებლად
+                    </div>
+                `;
+                suggestions.style.display = 'block';
+            }
+        }
+
+        function selectFood(foodName) {
+            document.getElementById('foodName').value = foodName;
+            document.getElementById('suggestions').style.display = 'none';
+        }
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.food-search')) {
+                document.getElementById('suggestions').style.display = 'none';
+            }
+        });
+
+        function openCustomFoodModal() {
+            document.getElementById('customFoodModal').classList.add('active');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('customFoodModal').classList.remove('active');
+        }
+
+        function addCustomFood(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('customFoodName').value;
+            const calories = parseFloat(document.getElementById('customCalories').value);
+            const protein = parseFloat(document.getElementById('customProtein').value);
+            const carbs = parseFloat(document.getElementById('customCarbs').value);
+            const fat = parseFloat(document.getElementById('customFat').value);
+            
+            // Add to database
+            foodDatabase[name] = { calories, protein, carbs, fat };
+            
+            // Save to localStorage
+            customFoods[name] = { calories, protein, carbs, fat };
+            localStorage.setItem('customFoods', JSON.stringify(customFoods));
+            
+            // Set as current selection
+            document.getElementById('foodName').value = name;
+            
+            // Close modal and reset form
+            closeCustomModal();
+            event.target.reset();
+            
+            alert(`"${name}" წარმატებით დაემატა ბაზას!`);
+        }
+
+        function addFood() {
+            const foodName = document.getElementById('foodName').value;
+            const amount = parseFloat(document.getElementById('foodAmount').value) || 100;
+            
+            const foodData = foodDatabase[foodName] || foodDatabase[foodName.toLowerCase()];
+            
+            if (!foodData) {
+                if (confirm(`"${foodName}" ბაზაში არ არის. გსურთ მისი დამატება?`)) {
+                    openCustomFoodModal();
+                    document.getElementById('customFoodName').value = foodName;
+                }
+                return;
+            }
+            
+            const multiplier = amount / 100;
+            const food = {
+                name: foodName,
+                meal: currentMeal,
+                amount: amount,
+                calories: Math.round(foodData.calories * multiplier),
+                protein: Math.round(foodData.protein * multiplier * 10) / 10,
+                carbs: Math.round(foodData.carbs * multiplier * 10) / 10,
+                fat: Math.round(foodData.fat * multiplier * 10) / 10
+            };
+            
+            foods.push(food);
+            updateFoodList();
+            updateStats();
+            
+            document.getElementById('foodName').value = '';
+            document.getElementById('foodAmount').value = '100';
+        }
+
+        function quickAdd(foodName, caloriesPer100) {
+            document.getElementById('foodName').value = foodName;
+            addFood();
+        }
+
+        function deleteFood(index) {
+            foods.splice(index, 1);
+            updateFoodList();
+            updateStats();
+        }
+
+        function updateFoodList() {
+            const list = document.getElementById('foodList');
+            list.innerHTML = foods.map((food, index) => `
+                <div class="food-item">
+                    <div class="food-info">
+                        <div class="food-name">${food.name} (${food.meal})</div>
+                        <div class="food-details">
+                            ${food.amount}გ | ${food.calories} კალ | 
+                            ცილა: ${food.protein}გ | ნახშ: ${food.carbs}გ | ცხიმი: ${food.fat}გ
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteFood(${index})">წაშლა</button>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const totals = foods.reduce((acc, food) => {
+                acc.calories += food.calories;
+                acc.protein += food.protein;
+                acc.carbs += food.carbs;
+                acc.fat += food.fat;
+                return acc;
+            }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+            
+            document.getElementById('totalCalories').textContent = totals.calories;
+            document.getElementById('totalProtein').textContent = totals.protein.toFixed(1) + 'გ';
+            document.getElementById('totalCarbs').textContent = totals.carbs.toFixed(1) + 'გ';
+            document.getElementById('totalFat').textContent = totals.fat.toFixed(1) + 'გ';
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
+            const dailyGoal = parseInt(document.getElementById('dailyGoal').value) || 2000;
+            const percentage = Math.min(100, Math.round((totalCalories / dailyGoal) * 100));
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '% დღიური ნორმიდან';
+            
+            if (percentage > 100) {
+                progressBar.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%)';
+            } else if (percentage > 80) {
+                progressBar.style.background = 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)';
+            } else {
+                progressBar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        }
+
+        // Product categories
+        const productCategories = {
+            fruits: ['ვაშლი', 'ბანანი', 'ფორთოხალი', 'მანდარინი', 'მსხალი', 'ატამი', 'ალუბალი', 'ყურძენი', 'საზამთრო', 'ნესვი', 'მარწყვი', 'ლიმონი', 'კივი', 'ანანასი', 'მანგო'],
+            vegetables: ['პომიდორი', 'კიტრი', 'კარტოფილი', 'სტაფილო', 'ხახვი', 'ნიორი', 'კომბოსტო', 'ყვავილოვანი კომბოსტო', 'ბროკოლი', 'ბადრიჯანი', 'გოგრა', 'ბულგარული წიწაკა', 'წიწაკა', 'ჭარხალი', 'სალათის ფოთოლი', 'ისპანახი', 'მწვანილი', 'ავოკადო'],
+            dairy: ['რძე 2.5%', 'რძე 3.2%', 'მაწონი', 'კეფირი', 'იოგურტი', 'ხაჭო', 'არაჟანი', 'ყველი სულგუნი', 'ყველი იმერული', 'ყველი ჰოლანდიური', 'ნაღები', 'კარაქი'],
+            meat: ['ქათმის მკერდი', 'ქათმის ბარკალი', 'ღორის ხორცი', 'საქონლის ხორცი', 'ცხვრის ხორცი', 'ძეხვი', 'სოსისი', 'ლორი', 'ორაგული', 'კალმახი', 'კობრი', 'თინუსი'],
+            grains: ['ბრინჯი', 'წიწიბურა', 'შვრია', 'ქერი', 'სიმინდი', 'ფეტვი', 'პური თეთრი', 'პური შავი', 'შოთის პური', 'ლავაში', 'მაკარონი', 'სპაგეტი', 'ფქვილი', 'ლობიო', 'ბარდა', 'ოსპი', 'მუხუდო'],
+            nuts: ['ნიგოზი', 'ბადამი', 'თხილი', 'პისტა', 'მზესუმზირა'],
+            sweets: ['შოკოლადი', 'ნამცხვარი', 'ნაყინი', 'ჟელე', 'ტორტი', 'თაფლი', 'შაქარი']
+        };
+
+        let currentCategory = 'all';
+        let searchTerm = '';
+
+        function showCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            displayProducts();
+        }
+
+        function filterDatabase() {
+            searchTerm = document.getElementById('databaseSearch').value.toLowerCase();
+            displayProducts();
+        }
+
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            let productsToShow = [];
+
+            if (currentCategory === 'all') {
+                productsToShow = Object.keys(foodDatabase);
+            } else {
+                productsToShow = productCategories[currentCategory] || [];
+            }
+
+            // Filter by search term
+            if (searchTerm) {
+                productsToShow = productsToShow.filter(product => 
+                    product.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Sort alphabetically
+            productsToShow.sort((a, b) => a.localeCompare(b, 'ka'));
+
+            grid.innerHTML = productsToShow.map(productName => {
+                const product = foodDatabase[productName];
+                return `
+                    <div class="product-card" onclick="selectProductFromDatabase('${productName}')">
+                        <div class="product-name">${productName}</div>
+                        <div class="product-calories">${product.calories} კალ</div>
+                        <div class="product-info">
+                            ცილა: ${product.protein}გ<br>
+                            ნახშ: ${product.carbs}გ<br>
+                            ცხიმი: ${product.fat}გ
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (productsToShow.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">პროდუქტები ვერ მოიძებნა</div>';
+            }
+        }
+
+        function selectProductFromDatabase(productName) {
+            document.getElementById('foodName').value = productName;
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Focus on amount field
+            document.getElementById('foodAmount').focus();
+        }
+
+        // Initialize products display on page load
+        window.addEventListener('load', function() {
+            displayProducts();
+        });
+    </script>
+</body>
+</html>
