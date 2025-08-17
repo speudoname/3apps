@@ -2,23 +2,25 @@
 
 /* Floating Auth Button - Always Visible */
 .floating-auth-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    padding: 15px 30px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    border-radius: 50px;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-    z-index: 1000;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-    animation: pulse 2s infinite;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    padding: 15px 30px !important;
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    color: white !important;
+    border-radius: 50px !important;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4) !important;
+    z-index: 999999 !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    font-size: 1.1rem !important;
+    transition: all 0.3s !important;
+    animation: pulse 2s infinite !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .floating-auth-btn:hover {
@@ -34,14 +36,19 @@
 
 /* Enhanced Auth Banner */
 .auth-banner-enhanced {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 25px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-    animation: slideDown 0.5s ease-out;
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    color: white !important;
+    padding: 25px !important;
+    border-radius: 15px !important;
+    margin-bottom: 30px !important;
+    text-align: center !important;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3) !important;
+    animation: slideDown 0.5s ease-out !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 9999 !important;
+    position: relative !important;
 }
 
 @keyframes slideDown {

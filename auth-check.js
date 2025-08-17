@@ -44,10 +44,20 @@ function updateUIForLoggedInUser(userData) {
 }
 
 function updateUIForGuest() {
-    // Default UI is already set for guests, but we can enhance it here if needed
+    // Show auth prompts for guests
     const authPrompt = document.getElementById('authPrompt');
+    const floatingBtn = document.getElementById('floatingAuthBtn');
+    
     if (authPrompt) {
         authPrompt.style.display = 'block';
+        authPrompt.style.visibility = 'visible';
+        authPrompt.style.opacity = '1';
+    }
+    
+    if (floatingBtn) {
+        floatingBtn.style.display = 'flex';
+        floatingBtn.style.visibility = 'visible';
+        floatingBtn.style.opacity = '1';
     }
 }
 
