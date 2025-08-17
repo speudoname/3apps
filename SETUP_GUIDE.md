@@ -30,15 +30,13 @@
 
    **Redirect URLs** (add all of these):
    ```
-   https://3apps.vercel.app
-   https://3apps.vercel.app/*
-   https://3apps.vercel.app/auth.html
-   https://3apps.vercel.app/index.html
-   https://3apps.vercel.app/calorie-counter.html
-   https://3apps.vercel.app/task-manager.html
-   https://3apps.vercel.app/inventory.html
-   http://localhost:8000
-   http://localhost:8000/*
+   https://3apps-demo.vercel.app
+   https://3apps-demo.vercel.app/*
+   https://3apps-demo.vercel.app/auth.html
+   https://3apps-demo.vercel.app/index.html
+   https://3apps-demo.vercel.app/calorie-counter.html
+   https://3apps-demo.vercel.app/task-manager.html
+   https://3apps-demo.vercel.app/inventory.html
    ```
 
 ### 2. Update .env File
